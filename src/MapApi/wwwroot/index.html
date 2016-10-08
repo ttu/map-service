@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Map</title>
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css">-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <style>
+        .overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background: rgba(51, 51, 51, 0.7);
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="overlay"></div>
+
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/2.3.0/superagent.min.js"></script>
+    <script>
+
+    const map = L.map('map')
+    let markers = new L.FeatureGroup();
+    map.addLayer(markers);
+    
+    function handleMarkerArray(arr){
+        arr.forEach(marker => {
+            const stationMarkerOptions = { radius: 20 };
+            const popupContent = marker.description;
+            
+            L.circle(L.latLng(marker.lat, marker.lng), stationMarkerOptions)
+                .bindPopup(popupContent)
+                .addTo(markers);
+        });
+    }
+
+    const request = window.superagent;
+
+    // Fancy wrapper for SuperAgent or whatever is used for api calls
+    const api = {
+        get : (url) => {
+            return new Promise((resolve, reject) => {
+                request
+                    .get(url)
+                    .end((err, resp) => {
+                        err ? reject(err) : resolve(resp.body);
+                    });
+            });
+        }
+    };
+
+    // const mapId = '4fGe9';
+    const mapId = 'e5c4d';
+    
+    var markersPromise = api.get(`/api/map/${mapId}/markers`);
+
+    api.get(`/api/map/${mapId}`).then(l => {
+        map.setView(L.latLng(l.lat, l.lng), l.elevation);
+        
+        L.tileLayer(l.url, { 
+            attribution: l.attribution,
+            maxZoom: l.maxZoom,
+            id: l.projectId,
+            access_token: l.accessToken
+        }).addTo(map);
+
+        Promise.all([markersPromise]).then(m => handleMarkerArray(m[0]));
+    });
+
+    const webSocket = new WebSocket("ws://localhost:5000/ws");
+
+    webSocket.onmessage = (evt) => {
+        // Reset and redraw markers layer
+        map.removeLayer(markers);
+        markers = new L.FeatureGroup();
+        map.addLayer(markers);
+
+        const newData = Array.from(JSON.parse(evt.data));
+        handleMarkerArray(newData);
+    };
+
+    webSocket.onopen = () => {
+        webSocket.send(`join ${mapId}`);
+        console.log('open');
+    };
+    webSocket.onclose = () => {console.log('closed');};
+    webSocket.onerror = (evt) => {console.log(evt.data);};
+
+    </script>
+</body>
+
+</html>

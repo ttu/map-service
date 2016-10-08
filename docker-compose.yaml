@@ -1,0 +1,19 @@
+version: '2'
+services:
+   web:
+     build: ./src/MapApi/
+     ports:
+       - "5000:5000"
+     depends_on:
+       - db
+     links:
+       - db
+   db:
+     restart: always
+     image: postgres
+     ports:
+       - "5432:5432"
+     environment:
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=pwd
+       - POSTGRES_DB=map-db

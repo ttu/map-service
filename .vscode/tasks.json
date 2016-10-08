@@ -1,0 +1,33 @@
+{
+    "version": "0.1.0",
+    "command": "dotnet",
+    "isShellCommand": true,
+    "args": [],
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": [
+                "${workspaceRoot}\\src\\MapApi\\project.json",
+                "${workspaceRoot}\\test\\MapApi.Tests\\project.json"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "run",
+            "args": [
+                "-p",
+                "${workspaceRoot}\\src\\MapApi\\project.json"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "test",
+            "args": [
+                "${workspaceRoot}\\test\\MapApi.Tests\\project.json"
+            ],
+            "isTestCommand": true,
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
