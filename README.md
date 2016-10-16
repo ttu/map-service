@@ -28,6 +28,8 @@
 $ dotnet run -p src/MapApi/
 # Execute tests
 $ dotnet test test/MapApi.Tests/
+# Run API with watch (run from src/MapApi)
+$ dotnet watch run
 ```
 
 ### Postgres
