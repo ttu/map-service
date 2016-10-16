@@ -1,5 +1,12 @@
 # MapAPI
 
+## TODO
+
+- [ ] Authentication
+- [ ] Swagger
+- [ ] Docker compose
+- [ ] Hangfire for background tasks
+
 ## Run Development
 
 ### VS Code
@@ -66,3 +73,7 @@ $ docker run -it -p 5000:5000 web
 * [Core unit test](https://docs.microsoft.com/en-us/dotnet/articles/core/testing/unit-testing-with-dotnet-test)
 * [Docker & AWS](https://medium.com/trafi-tech-beat/running-net-core-on-docker-c438889eb5a#.2csx1do7r)
 * [Marten](http://jasperfx.github.io/marten/)
+
+## License
+
+Licensed under the [MIT](LICENSE) License.

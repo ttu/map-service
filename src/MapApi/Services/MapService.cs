@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marten;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace MapApi
 {
@@ -68,13 +66,12 @@ namespace MapApi
             {
                 session.DeleteWhere<MapPoint>(x => x.MapId == mapId);
                 await session.SaveChangesAsync();
-                
+
                 session.Store(points.ToArray());
                 await session.SaveChangesAsync();
             }
 
-            _hub.DataUpdated(mapId, JsonConvert.SerializeObject(points,
-                               new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+            _hub.DataUpdated(mapId, Utils.Serialize(points));
             return true;
         }
     }

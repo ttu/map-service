@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Marten;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -35,7 +27,7 @@ namespace MapApi
         {
             string connString = Configuration.GetSection("Database").GetValue<string>("ConnectionString");
             var store = MartenHelper.GetStore(connString);
-            
+
             // For debugging
             MartenHelper.Clean(store);
             MartenHelper.Init(store);
@@ -43,7 +35,7 @@ namespace MapApi
             var hub = new MessageHub();
             var service = new MapService(hub, store);
             var hsl = new HslLocation(service);
-            
+
             // We don't mind if background process is killed. Should replace with e.g. Hangfire
             Task.Run(async () =>
             {

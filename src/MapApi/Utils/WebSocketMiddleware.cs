@@ -14,7 +14,6 @@ namespace MapApi
         private ConcurrentDictionary<string, ConcurrentDictionary<string, WebSocket>> _sockets =
             new ConcurrentDictionary<string, ConcurrentDictionary<string, WebSocket>>();
 
-        // private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
         private MessageHub _hub;
         private CancellationToken _token = CancellationToken.None;
 
@@ -25,7 +24,7 @@ namespace MapApi
             {
                 if (!_sockets.ContainsKey(data.Item1))
                     return;
-                    
+
                 _sockets[data.Item1].Values
                     .Where(socket => socket.State == WebSocketState.Open)
                     .ToList()
@@ -55,9 +54,10 @@ namespace MapApi
                         case WebSocketMessageType.Text:
                             // Expect join xxxx from the client
                             var request = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-                            request = request.Substring(0, request.IndexOf("\0"));
                             if (request.StartsWith("join"))
                             {
+                                request = request.IndexOf("\0") > -1 ? request.Substring(0, request.IndexOf("\0")) : request;
+
                                 var key = request.Split(' ')[1];
                                 if (!_sockets.ContainsKey(key))
                                     _sockets.TryAdd(key, new ConcurrentDictionary<string, WebSocket>());
