@@ -6,6 +6,7 @@
 - [ ] Swagger
 - [ ] Docker compose
 - [ ] Hangfire for background tasks
+- [ ] Logging
 
 ## Run Development
 
@@ -31,6 +32,10 @@ $ dotnet test test/MapApi.Tests/
 # Run API with watch (run from src/MapApi)
 $ dotnet watch run
 ```
+
+### Visual Studio
+
+Open _MapiApi.sln_
 
 ### Postgres
 
